@@ -1,6 +1,10 @@
+@file:Suppress("UNUSED_EXPRESSION")
+
 package com.example.drawingapp.drawing.component
 
 import android.view.MotionEvent
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -16,8 +20,8 @@ import com.example.drawingapp.drawing.DrawingPathRoute
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun DrawingCanvas(tracks: MutableState<List<DrawingPathRoute>?>) {
-    androidx.compose.foundation.Canvas(
+fun DrawingCanvas(tracks: MutableState<List<DrawingPathRoute>?>, penSize: Float, canvasHeight: PaddingValues) {
+    Canvas(
         modifier = Modifier
             .fillMaxSize()
             .pointerInteropFilter { motionEvent: MotionEvent ->
@@ -36,13 +40,12 @@ fun DrawingCanvas(tracks: MutableState<List<DrawingPathRoute>?>) {
                             add(DrawingPathRoute.LineTo(motionEvent.x, motionEvent.y))
                         }
                     }
-
                     else -> false
                 }
                 true
             }) {
         val paths = ArrayList<Path>()
-        tracks?.let {
+        tracks.let {
             var path = Path()
             tracks.value?.forEach { drawingPathRoute ->
                 when (drawingPathRoute) {
@@ -60,12 +63,10 @@ fun DrawingCanvas(tracks: MutableState<List<DrawingPathRoute>?>) {
             paths.add(path)
         }
 
-        val penSize = 10f
         inset(horizontal = penSize, vertical = penSize) {
-
             paths.forEach {
                 drawPath(
-                    path = it, // Fix here: Use 'it' instead of 'path'
+                    path = it,
                     color = Color.Black,
                     style = Stroke(width = penSize),
                     blendMode = BlendMode.SrcOver
