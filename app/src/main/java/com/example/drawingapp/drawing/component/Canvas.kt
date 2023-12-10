@@ -12,7 +12,6 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.drawscope.inset
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import com.example.drawingapp.drawing.DrawingPathRoute
 import com.example.drawingapp.drawing.data.CustomDrawingPath
@@ -20,7 +19,7 @@ import com.example.drawingapp.drawing.data.CustomDrawingPath
 @Suppress("UNUSED_EXPRESSION")
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun DrawingCanvas(tracks: MutableState<List<CustomDrawingPath>?>, penSize: Float, canvasHeight: PaddingValues) {
+fun DrawingCanvas(tracks: MutableState<List<CustomDrawingPath>?>, penSize: Float, penColor: Color, canvasHeight: PaddingValues) {
     Canvas(
         modifier = Modifier
             .fillMaxSize()
@@ -32,7 +31,7 @@ fun DrawingCanvas(tracks: MutableState<List<CustomDrawingPath>?>, penSize: Float
                             tracks.value?.let { addAll(it) }
                             add(CustomDrawingPath(
                                 path = DrawingPathRoute.MoveTo(motionEvent.x, motionEvent.y),
-                                color = Color.Black,
+                                color = penColor,
                                 size = penSize
                             ))
                         }
@@ -43,7 +42,7 @@ fun DrawingCanvas(tracks: MutableState<List<CustomDrawingPath>?>, penSize: Float
                             tracks.value?.let { addAll(it) }
                             add(CustomDrawingPath(
                                 path = DrawingPathRoute.LineTo(motionEvent.x, motionEvent.y),
-                                color = Color.Black,
+                                color = penColor,
                                 size = penSize
                             ))
                         }
@@ -53,31 +52,28 @@ fun DrawingCanvas(tracks: MutableState<List<CustomDrawingPath>?>, penSize: Float
                 }
                 true
             }) {
-        val paths = ArrayList<Path>()
         var currentPath = Path()
         var currentSize = penSize
 
         tracks.let {
-            var path = Path()
             tracks.value?.forEach { customDrawingPath ->
                 when (customDrawingPath.path) {
                     is DrawingPathRoute.MoveTo -> {
-                        paths.add(currentPath)
                         currentPath = Path().apply { moveTo(customDrawingPath.path.x, customDrawingPath.path.y) }
                         currentSize = customDrawingPath.size
+                        customDrawingPath.color = penColor
                     }
 
                     is DrawingPathRoute.LineTo -> {
                         drawPath(
                             path = currentPath.apply { lineTo(customDrawingPath.path.x, customDrawingPath.path.y) },
-                            color = Color.Black,
+                            color = customDrawingPath.color,
                             style = Stroke(width = currentSize),
                             blendMode = BlendMode.SrcOver
                         )
                     }
                 }
             }
-            paths.add(currentPath)
         }
     }
 }

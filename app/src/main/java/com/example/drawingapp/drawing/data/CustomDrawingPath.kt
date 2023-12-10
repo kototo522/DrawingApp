@@ -6,6 +6,6 @@ import com.example.drawingapp.drawing.DrawingPathRoute
 
 data class CustomDrawingPath(
     val path: DrawingPathRoute,
-    val color: Color,
+    var color: Color,
     val size: Float
 )
