@@ -13,7 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInteropFilter
-import com.example.drawingapp.drawing.DrawingPathRoute
 import com.example.drawingapp.drawing.data.CustomDrawingPath
 
 @Suppress("UNUSED_EXPRESSION")

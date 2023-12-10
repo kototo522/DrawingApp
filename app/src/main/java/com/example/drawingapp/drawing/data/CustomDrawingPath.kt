@@ -1,7 +1,7 @@
 package com.example.drawingapp.drawing.data
 
 import androidx.compose.ui.graphics.Color
-import com.example.drawingapp.drawing.DrawingPathRoute
+import com.example.drawingapp.drawing.component.DrawingPathRoute
 
 
 data class CustomDrawingPath(
