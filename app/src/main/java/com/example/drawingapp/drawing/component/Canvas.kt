@@ -15,11 +15,12 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.inset
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import com.example.drawingapp.drawing.DrawingPathRoute
+import com.example.drawingapp.drawing.data.CustomDrawingPath
 
 @Suppress("UNUSED_EXPRESSION")
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun DrawingCanvas(tracks: MutableState<List<DrawingPathRoute>?>, penSize: Float, canvasHeight: PaddingValues) {
+fun DrawingCanvas(tracks: MutableState<List<CustomDrawingPath>?>, penSize: Float, canvasHeight: PaddingValues) {
     Canvas(
         modifier = Modifier
             .fillMaxSize()
@@ -27,16 +28,24 @@ fun DrawingCanvas(tracks: MutableState<List<DrawingPathRoute>?>, penSize: Float,
                 when (motionEvent.action) {
                     // 描き始めの処理
                     MotionEvent.ACTION_DOWN -> {
-                        tracks.value = ArrayList<DrawingPathRoute>().apply {
+                        tracks.value = ArrayList<CustomDrawingPath>().apply {
                             tracks.value?.let { addAll(it) }
-                            add(DrawingPathRoute.MoveTo(motionEvent.x, motionEvent.y))
+                            add(CustomDrawingPath(
+                                path = DrawingPathRoute.MoveTo(motionEvent.x, motionEvent.y),
+                                color = Color.Black,
+                                size = penSize
+                            ))
                         }
                     }
                     // 書いてる途中の処理
                     MotionEvent.ACTION_MOVE -> {
-                        tracks.value = ArrayList<DrawingPathRoute>().apply {
+                        tracks.value = ArrayList<CustomDrawingPath>().apply {
                             tracks.value?.let { addAll(it) }
-                            add(DrawingPathRoute.LineTo(motionEvent.x, motionEvent.y))
+                            add(CustomDrawingPath(
+                                path = DrawingPathRoute.LineTo(motionEvent.x, motionEvent.y),
+                                color = Color.Black,
+                                size = penSize
+                            ))
                         }
                     }
 
@@ -45,33 +54,30 @@ fun DrawingCanvas(tracks: MutableState<List<DrawingPathRoute>?>, penSize: Float,
                 true
             }) {
         val paths = ArrayList<Path>()
+        var currentPath = Path()
+        var currentSize = penSize
+
         tracks.let {
             var path = Path()
-            tracks.value?.forEach { drawingPathRoute ->
-                when (drawingPathRoute) {
+            tracks.value?.forEach { customDrawingPath ->
+                when (customDrawingPath.path) {
                     is DrawingPathRoute.MoveTo -> {
-                        paths.add(path)
-                        path = Path()
-                        path.moveTo(drawingPathRoute.x, drawingPathRoute.y)
+                        paths.add(currentPath)
+                        currentPath = Path().apply { moveTo(customDrawingPath.path.x, customDrawingPath.path.y) }
+                        currentSize = customDrawingPath.size
                     }
 
                     is DrawingPathRoute.LineTo -> {
-                        path.lineTo(drawingPathRoute.x, drawingPathRoute.y)
+                        drawPath(
+                            path = currentPath.apply { lineTo(customDrawingPath.path.x, customDrawingPath.path.y) },
+                            color = Color.Black,
+                            style = Stroke(width = currentSize),
+                            blendMode = BlendMode.SrcOver
+                        )
                     }
                 }
             }
-            paths.add(path)
-        }
-
-        inset(horizontal = penSize, vertical = penSize) {
-            paths.forEach {
-                drawPath(
-                    path = it,
-                    color = Color.Black,
-                    style = Stroke(width = penSize),
-                    blendMode = BlendMode.SrcOver
-                )
-            }
+            paths.add(currentPath)
         }
     }
 }

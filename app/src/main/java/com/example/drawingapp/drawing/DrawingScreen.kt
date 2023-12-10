@@ -19,13 +19,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import com.example.drawingapp.drawing.component.DrawingCanvas
+import com.example.drawingapp.drawing.data.CustomDrawingPath
 import java.io.Serializable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DrawingScreen() {
     // 描画の履歴の記録のため
-    val tracks = rememberSaveable { mutableStateOf<List<DrawingPathRoute>?>(null) }
+    val tracks = rememberSaveable { mutableStateOf<List<CustomDrawingPath>?>(null) }
     var penSize by remember { mutableStateOf(4f) }
     var showPenSizeSlider by remember { mutableStateOf(false) }
 
