@@ -1,5 +1,3 @@
-@file:Suppress("UNUSED_EXPRESSION")
-
 package com.example.drawingapp.drawing.component
 
 import android.view.MotionEvent
@@ -18,6 +16,7 @@ import androidx.compose.ui.graphics.drawscope.inset
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import com.example.drawingapp.drawing.DrawingPathRoute
 
+@Suppress("UNUSED_EXPRESSION")
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun DrawingCanvas(tracks: MutableState<List<DrawingPathRoute>?>, penSize: Float, canvasHeight: PaddingValues) {
@@ -40,6 +39,7 @@ fun DrawingCanvas(tracks: MutableState<List<DrawingPathRoute>?>, penSize: Float,
                             add(DrawingPathRoute.LineTo(motionEvent.x, motionEvent.y))
                         }
                     }
+
                     else -> false
                 }
                 true
